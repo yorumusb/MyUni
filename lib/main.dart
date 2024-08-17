@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_uni/features/universities/presentation/home/cubits/university_cubit.dart';
 import 'package:my_uni/features/universities/presentation/home/home_page.dart';
+import 'package:my_uni/features/universities/services/university_service.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    BlocProvider(
+      create: (context) =>
+          UniversityCubit(UniversityService())..loadUniversities(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
