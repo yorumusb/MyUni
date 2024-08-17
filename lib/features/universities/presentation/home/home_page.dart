@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: customAppBar(),
+      appBar: _customAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: BlocBuilder<UniversityCubit, UniversityState>(
@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
             if (state is UniversityLoading) {
               return const CustomLoading();
             } else if (state is UniversityLoaded) {
-              return universityList(state);
+              return _universityList(state);
             } else if (state is UniversityError) {
               return Center(
                 child: Text("Failed to load universities: ${state.error}"),
@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  ListView universityList(UniversityLoaded state) {
+  ListView _universityList(UniversityLoaded state) {
     return ListView.builder(
       itemCount: state.universities.length,
       itemBuilder: (context, index) {
@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  AppBar customAppBar() {
+  AppBar _customAppBar() {
     return AppBar(
       title: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
