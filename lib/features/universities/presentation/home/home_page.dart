@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_uni/features/universities/presentation/details/details_page.dart';
 import 'package:my_uni/features/universities/presentation/home/cubits/university_cubit.dart';
 import 'package:my_uni/features/universities/presentation/home/cubits/university_state.dart';
 import 'package:my_uni/features/universities/presentation/home/widgets/custom_loading.dart';
@@ -49,6 +50,16 @@ class HomePage extends StatelessWidget {
               Icons.arrow_right,
               color: Colors.grey,
             ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailsPage(
+                    university: university,
+                  ),
+                ),
+              );
+            },
           ),
         );
       },
