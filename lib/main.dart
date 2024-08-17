@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_uni/features/universities/presentation/home/cubits/university_cubit.dart';
-import 'package:my_uni/features/universities/presentation/home/home_page.dart';
+import 'package:my_uni/features/universities/presentation/splash/splash_page.dart';
 import 'package:my_uni/features/universities/services/university_service.dart';
 
 void main() {
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const SplashPage(),
     );
   }
 }
