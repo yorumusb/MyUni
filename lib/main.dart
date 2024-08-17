@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_uni/features/universities/presentation/home/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,11 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
         useMaterial3: true,
       ),
-      home: const Scaffold(
-        body: Center(
-          child: Text("Start"),
-        ),
-      ),
+      home: const HomePage(),
     );
   }
 }
