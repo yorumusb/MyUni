@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
             if (state is UniversityLoading) {
               return const CustomLoading();
             } else if (state is UniversityLoaded) {
-              return _universityList(state);
+              return _universityList(context, state);
             } else if (state is UniversityError) {
               return Center(
                 child: Text("Failed to load universities: ${state.error}"),
@@ -35,33 +35,54 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  ListView _universityList(UniversityLoaded state) {
+  ListView _universityList(BuildContext context, UniversityLoaded state) {
+    final cubit = BlocProvider.of<UniversityCubit>(context);
+    final controller = ScrollController();
+    bool isLoadingMore = false;
+
+    controller.addListener(() {
+      if (controller.position.atEdge) {
+        if (controller.position.pixels != 0 && !isLoadingMore) {
+          isLoadingMore = true;
+          cubit.loadMoreUniversities().then((_) => isLoadingMore = false);
+        }
+      }
+    });
+
     return ListView.builder(
-      itemCount: state.universities.length,
+      controller: controller,
+      itemCount: state.universities.length + 1,
       itemBuilder: (context, index) {
-        final university = state.universities[index];
-        return Card(
-          child: ListTile(
-            title: Text(
-              university.name,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            trailing: const Icon(
-              Icons.arrow_right,
-              color: Colors.grey,
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetailsPage(
-                    university: university,
+        if (index < state.universities.length) {
+          final university = state.universities[index];
+          return Card(
+            child: ListTile(
+              title: Text(
+                university.name,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              trailing: const Icon(
+                Icons.arrow_right,
+                color: Colors.grey,
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailsPage(
+                      university: university,
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-        );
+                );
+              },
+            ),
+          );
+        } else {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 15.0),
+            child: CustomLoading(),
+          );
+        }
       },
     );
   }
