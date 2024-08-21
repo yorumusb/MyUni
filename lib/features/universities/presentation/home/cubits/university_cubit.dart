@@ -1,46 +1,47 @@
-import 'package:my_uni/features/universities/models/university_model.dart';
 import 'package:my_uni/features/universities/presentation/home/cubits/university_state.dart';
 import 'package:bloc/bloc.dart';
 import 'package:my_uni/features/universities/services/university_service.dart';
 
 class UniversityCubit extends Cubit<UniversityState> {
   final UniversityService universityService;
-  List<UniversityModel> _universities = [];
   int _offset = 0;
   final int _limit = 15;
 
-  UniversityCubit(this.universityService) : super(UniversityInitial());
+  UniversityCubit(this.universityService) : super(const UniversityState());
 
   Future<void> loadUniversities() async {
     try {
-      emit(UniversityLoading());
+      emit(state.copyWith(status: UniversityStatus.loading));
       _offset = 0;
       final universities = await universityService.fetchUniversities(
         offset: _offset,
         limit: _limit,
       );
-      _universities = universities;
       _offset += _limit;
-      emit(UniversityLoaded(_universities));
+      emit(state.copyWith(
+        status: UniversityStatus.success,
+        universities: universities,
+        hasReachedMax: universities.length < _limit,
+      ));
     } catch (e) {
-      emit(UniversityError(e.toString()));
+      emit(state.copyWith(status: UniversityStatus.failure));
     }
   }
 
   Future<void> loadMoreUniversities() async {
-    if (state is UniversityLoaded) {
+    if (!state.hasReachedMax && state.status == UniversityStatus.success) {
       try {
         final universities = await universityService.fetchUniversities(
           offset: _offset,
           limit: _limit,
         );
-        if (universities.isNotEmpty) {
-          _universities.addAll(universities);
-          _offset += _limit;
-          emit(UniversityLoaded(_universities));
-        }
+        _offset += _limit;
+        emit(state.copyWith(
+          universities: List.of(state.universities)..addAll(universities),
+          hasReachedMax: universities.isEmpty,
+        ));
       } catch (e) {
-        emit(UniversityError(e.toString()));
+        emit(state.copyWith(status: UniversityStatus.failure));
       }
     }
   }

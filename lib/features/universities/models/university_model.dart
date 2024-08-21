@@ -1,11 +1,13 @@
-class UniversityModel {
+import 'package:equatable/equatable.dart';
+
+final class University extends Equatable {
   final String code;
   final String name;
   final List<String> domain;
   final String country;
   final List<String> webPage;
 
-  UniversityModel({
+  const University({
     required this.code,
     required this.name,
     required this.domain,
@@ -13,8 +15,8 @@ class UniversityModel {
     required this.webPage,
   });
 
-  factory UniversityModel.fromJson(Map<String, dynamic> json) {
-    return UniversityModel(
+  factory University.fromJson(Map<String, dynamic> json) {
+    return University(
       code: json["alpha_two_code"],
       name: json["name"],
       domain: List<String>.from(json["domains"]),
@@ -22,4 +24,7 @@ class UniversityModel {
       webPage: List<String>.from(json["web_pages"]),
     );
   }
+
+  @override
+  List<Object> get props => [code, name, domain, country, webPage];
 }

@@ -1,19 +1,31 @@
+import 'package:equatable/equatable.dart';
 import 'package:my_uni/features/universities/models/university_model.dart';
 
-abstract class UniversityState {}
+enum UniversityStatus { initial, loading, success, failure }
 
-class UniversityInitial extends UniversityState {}
+final class UniversityState extends Equatable {
+  final UniversityStatus status;
+  final List<University> universities;
+  final bool hasReachedMax;
 
-class UniversityLoading extends UniversityState {}
+  const UniversityState({
+    this.status = UniversityStatus.initial,
+    this.universities = const <University>[],
+    this.hasReachedMax = false,
+  });
 
-class UniversityLoaded extends UniversityState {
-  final List<UniversityModel> universities;
+  UniversityState copyWith({
+    UniversityStatus? status,
+    List<University>? universities,
+    bool? hasReachedMax,
+  }) {
+    return UniversityState(
+      status: status ?? this.status,
+      universities: universities ?? this.universities,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+    );
+  }
 
-  UniversityLoaded(this.universities);
-}
-
-class UniversityError extends UniversityState {
-  final String error;
-
-  UniversityError(this.error);
+  @override
+  List<Object> get props => [status, universities, hasReachedMax];
 }

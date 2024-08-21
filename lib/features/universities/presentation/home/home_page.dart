@@ -16,13 +16,13 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.all(15.0),
         child: BlocBuilder<UniversityCubit, UniversityState>(
           builder: (context, state) {
-            if (state is UniversityLoading) {
+            if (state.status == UniversityStatus.loading) {
               return const CustomLoading();
-            } else if (state is UniversityLoaded) {
+            } else if (state.status == UniversityStatus.success) {
               return _universityList(context, state);
-            } else if (state is UniversityError) {
-              return Center(
-                child: Text("Failed to load universities: ${state.error}"),
+            } else if (state.status == UniversityStatus.failure) {
+              return const Center(
+                child: Text("Failed to load universities"),
               );
             } else {
               return const Center(
@@ -35,23 +35,21 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  ListView _universityList(BuildContext context, UniversityLoaded state) {
+  ListView _universityList(BuildContext context, UniversityState state) {
     final cubit = BlocProvider.of<UniversityCubit>(context);
     final controller = ScrollController();
-    bool isLoadingMore = false;
 
     controller.addListener(() {
-      if (controller.position.atEdge) {
-        if (controller.position.pixels != 0 && !isLoadingMore) {
-          isLoadingMore = true;
-          cubit.loadMoreUniversities().then((_) => isLoadingMore = false);
+      if (controller.position.atEdge && !state.hasReachedMax) {
+        if (controller.position.pixels != 0) {
+          cubit.loadMoreUniversities();
         }
       }
     });
 
     return ListView.builder(
       controller: controller,
-      itemCount: state.universities.length + 1,
+      itemCount: state.universities.length + (state.hasReachedMax ? 0 : 1),
       itemBuilder: (context, index) {
         if (index < state.universities.length) {
           final university = state.universities[index];

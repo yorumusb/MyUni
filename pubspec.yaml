@@ -15,6 +15,7 @@ dependencies:
     flutter_bloc:
     easy_url_launcher:
     easy_splash_screen:
+    equatable:
 
 dev_dependencies:
     flutter_test:
