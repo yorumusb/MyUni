@@ -5,8 +5,15 @@ import 'package:my_uni/features/universities/presentation/home/cubits/university
 import 'package:my_uni/features/universities/presentation/home/cubits/university_state.dart';
 import 'package:my_uni/features/universities/presentation/home/widgets/custom_loading.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +21,19 @@ class HomePage extends StatelessWidget {
       appBar: _customAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: BlocBuilder<UniversityCubit, UniversityState>(
+        child: BlocConsumer<UniversityCubit, UniversityState>(
+          listener: (context, state) {
+            if (state.status == UniversityStatus.success) {
+              controller.addListener(() {
+                if (controller.position.atEdge && !state.hasReachedMax) {
+                  if (controller.position.pixels != 0) {
+                    BlocProvider.of<UniversityCubit>(context)
+                        .loadMoreUniversities();
+                  }
+                }
+              });
+            }
+          },
           builder: (context, state) {
             if (state.status == UniversityStatus.loading) {
               return const CustomLoading();
@@ -36,17 +55,6 @@ class HomePage extends StatelessWidget {
   }
 
   ListView _universityList(BuildContext context, UniversityState state) {
-    final cubit = BlocProvider.of<UniversityCubit>(context);
-    final controller = ScrollController();
-
-    controller.addListener(() {
-      if (controller.position.atEdge && !state.hasReachedMax) {
-        if (controller.position.pixels != 0) {
-          cubit.loadMoreUniversities();
-        }
-      }
-    });
-
     return ListView.builder(
       controller: controller,
       itemCount: state.universities.length + (state.hasReachedMax ? 0 : 1),
