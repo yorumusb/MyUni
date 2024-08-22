@@ -16,6 +16,7 @@ dependencies:
     easy_url_launcher:
     easy_splash_screen:
     equatable:
+    shared_preferences:
 
 dev_dependencies:
     flutter_test:
