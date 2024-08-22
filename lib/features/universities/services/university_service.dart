@@ -4,16 +4,21 @@ import 'package:my_uni/features/universities/models/university_model.dart';
 
 class UniversityService {
   Future<List<University>> fetchUniversities(
-      {int offset = 0, int limit = 15, String? name}) async {
+      {int offset = 0, int limit = 15, String? name, String? country}) async {
     final queryParameters = {
       'offset': offset.toString(),
       'limit': limit.toString(),
-      'country': 'turkey',
     };
 
     if (name != null && name.isNotEmpty) {
       queryParameters.addAll({
         'name': name,
+      });
+    }
+
+    if (country != null && country.isNotEmpty) {
+      queryParameters.addAll({
+        'country': country,
       });
     }
 

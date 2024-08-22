@@ -21,9 +21,8 @@ class _SplashPageState extends State<SplashPage> {
         style: Theme.of(context).textTheme.displaySmall!,
       ),
       backgroundColor: Colors.grey.shade300,
-      showLoader: true,
-      loadingText: const Text("Loading..."),
-      durationInSeconds: 2,
+      showLoader: false,
+      durationInSeconds: 1,
       navigator: const HomePage(),
     );
   }

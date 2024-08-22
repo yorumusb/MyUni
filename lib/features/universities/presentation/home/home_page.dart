@@ -4,6 +4,7 @@ import 'package:my_uni/features/universities/presentation/details/details_page.d
 import 'package:my_uni/features/universities/presentation/home/cubits/university_cubit.dart';
 import 'package:my_uni/features/universities/presentation/home/cubits/university_state.dart';
 import 'package:my_uni/features/universities/presentation/home/widgets/custom_loading.dart';
+import 'package:my_uni/features/universities/services/country_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,6 +16,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final controller = ScrollController();
   final TextEditingController searchController = TextEditingController();
+  List<String> countryList = [];
+  var dropdownValue = "";
+  var selectedValue = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCountries();
+  }
+
+  Future<void> _loadCountries() async {
+    final countries = await CountryService().fetchCountries();
+    setState(() {
+      countryList = countries;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +88,27 @@ class _HomePageState extends State<HomePage> {
                         ),
                       )
                     ],
+                  ),
+                  const SizedBox(height: 10),
+                  DropdownMenu<String>(
+                    width: MediaQuery.of(context).size.width - 30,
+                    hintText: "Select Country",
+                    initialSelection: selectedValue,
+                    onSelected: (value) {
+                      setState(() {
+                        dropdownValue = value!;
+                        BlocProvider.of<UniversityCubit>(context)
+                            .loadUniversities(country: dropdownValue);
+                        selectedValue = dropdownValue;
+                      });
+                    },
+                    dropdownMenuEntries: countryList
+                        .map<DropdownMenuEntry<String>>((String value) {
+                      return DropdownMenuEntry<String>(
+                        value: value,
+                        label: value,
+                      );
+                    }).toList(),
                   ),
                   const SizedBox(height: 10),
                   Expanded(child: _universityList(context, state)),
