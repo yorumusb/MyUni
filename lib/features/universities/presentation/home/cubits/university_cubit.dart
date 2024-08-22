@@ -8,21 +8,26 @@ class UniversityCubit extends Cubit<UniversityState> {
 
   UniversityCubit(this.universityService) : super(const UniversityState());
 
-  Future<void> loadUniversities() async {
+  Future<void> loadUniversities({String? name}) async {
     try {
-      emit(state.copyWith(status: UniversityStatus.loading));
+      emit(const UniversityState().copyWith(
+        status: UniversityStatus.loading,
+      ));
 
       final universities = await universityService.fetchUniversities(
         offset: 0,
         limit: _limit,
+        name: name,
       );
 
       emit(state.copyWith(
         status: UniversityStatus.success,
         universities: universities,
         hasReachedMax: universities.length < _limit,
+        name: name,
       ));
     } catch (e) {
+      print(e);
       emit(state.copyWith(status: UniversityStatus.failure));
     }
   }
@@ -33,6 +38,7 @@ class UniversityCubit extends Cubit<UniversityState> {
         final universities = await universityService.fetchUniversities(
           offset: _limit * state.page,
           limit: _limit,
+          name: state.name,
         );
 
         emit(state.copyWith(

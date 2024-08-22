@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final controller = ScrollController();
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,43 @@ class _HomePageState extends State<HomePage> {
             if (state.status == UniversityStatus.loading) {
               return const CustomLoading();
             } else if (state.status == UniversityStatus.success) {
-              return _universityList(context, state);
+              return Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: searchController,
+                          decoration: InputDecoration(
+                            hintText: "Search Universities",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.blue,
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.search),
+                          color: Colors.white,
+                          onPressed: () {
+                            final searchedText = searchController.value.text;
+                            BlocProvider.of<UniversityCubit>(context)
+                                .loadUniversities(name: searchedText);
+                          },
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(child: _universityList(context, state)),
+                ],
+              );
             } else if (state.status == UniversityStatus.failure) {
               return const Center(
                 child: Text("Failed to load universities"),
