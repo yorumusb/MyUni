@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_uni/features/universities/presentation/home/cubits/university_cubit.dart';
@@ -9,7 +7,6 @@ import 'package:my_uni/features/universities/presentation/home/widgets/country_d
 import 'package:my_uni/features/universities/presentation/home/widgets/custom_loading.dart';
 import 'package:my_uni/features/universities/presentation/home/widgets/search.dart';
 import 'package:my_uni/features/universities/presentation/home/widgets/university_list.dart';
-import 'package:my_uni/features/universities/services/country_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,12 +17,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final controller = ScrollController();
-  final TextEditingController searchController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +28,7 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(15.0),
         child: Column(
           children: [
-            Search(searchController: searchController),
+            Search(),
             const SizedBox(height: 10),
             const CountryDropdown(),
             const SizedBox(height: 10),
