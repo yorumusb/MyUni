@@ -1,24 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:my_uni/features/universities/presentation/details/details_page.dart';
-import 'package:my_uni/features/universities/presentation/home/cubits/university_state.dart';
-import 'package:my_uni/features/universities/presentation/home/widgets/custom_loading.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../details/details_page.dart';
+import '../cubits/university_cubit.dart';
+import 'custom_loading.dart';
 
-class UniversityList extends StatelessWidget {
-  const UniversityList({
-    super.key,
-    required this.controller,
-    required this.context,
-    required this.state,
-  });
+class UniversityList extends StatefulWidget {
+  const UniversityList({super.key});
 
-  final ScrollController controller;
-  final BuildContext context;
-  final UniversityState state;
+  @override
+  State<UniversityList> createState() => _UniversityListState();
+}
+
+class _UniversityListState extends State<UniversityList> {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      if (_controller.position.atEdge && _controller.position.pixels != 0) {
+        final cubit = context.read<UniversityCubit>();
+        if (!cubit.state.hasReachedMax) {
+          cubit.loadMoreUniversities();
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<UniversityCubit>().state;
+
     return ListView.builder(
-      controller: controller,
+      controller: _controller,
       itemCount: state.universities.length + (state.hasReachedMax ? 0 : 1),
       itemBuilder: (context, index) {
         if (index < state.universities.length) {

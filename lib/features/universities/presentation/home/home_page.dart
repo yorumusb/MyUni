@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_uni/features/universities/presentation/home/cubits/university_cubit.dart';
-import 'package:my_uni/features/universities/presentation/home/cubits/university_state.dart';
-import 'package:my_uni/features/universities/presentation/home/widgets/app_bar_title.dart';
-import 'package:my_uni/features/universities/presentation/home/widgets/country_dropdown.dart';
-import 'package:my_uni/features/universities/presentation/home/widgets/custom_loading.dart';
-import 'package:my_uni/features/universities/presentation/home/widgets/search.dart';
-import 'package:my_uni/features/universities/presentation/home/widgets/university_list.dart';
+import 'cubits/university_cubit.dart';
+import 'cubits/university_state.dart';
+import 'widgets/app_bar_title.dart';
+import 'widgets/country_dropdown.dart';
+import 'widgets/custom_loading.dart';
+import 'widgets/search.dart';
+import 'widgets/university_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,8 +16,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final controller = ScrollController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,29 +30,13 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 10),
             const CountryDropdown(),
             const SizedBox(height: 10),
-            BlocConsumer<UniversityCubit, UniversityState>(
-              listener: (context, state) {
-                if (state.status == UniversityStatus.success) {
-                  controller.addListener(() {
-                    if (controller.position.atEdge && !state.hasReachedMax) {
-                      if (controller.position.pixels != 0) {
-                        BlocProvider.of<UniversityCubit>(context)
-                            .loadMoreUniversities();
-                      }
-                    }
-                  });
-                }
-              },
+            BlocBuilder<UniversityCubit, UniversityState>(
               builder: (context, state) {
                 if (state.status == UniversityStatus.loading) {
                   return const CustomLoading();
                 } else if (state.status == UniversityStatus.success) {
-                  return Expanded(
-                    child: UniversityList(
-                      controller: controller,
-                      context: context,
-                      state: state,
-                    ),
+                  return const Expanded(
+                    child: UniversityList(),
                   );
                 } else if (state.status == UniversityStatus.failure) {
                   return const Center(
